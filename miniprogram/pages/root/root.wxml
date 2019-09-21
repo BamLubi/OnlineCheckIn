@@ -1,0 +1,131 @@
+<!--miniprogram/pages/root/root.wxml-->
+<view class="table">
+    <!-- 顶部导航栏 -->
+    <scroll-view scroll-x class="nav" style="background-color: #36f;">
+        <view class="flex text-center">
+            <view class="cu-item flex-sub {{index==TabCur?'text-white cur':''}}" wx:for="{{TabCurText}}" wx:key bindtap="tabSelect" data-id="{{index}}">
+                {{item}}
+            </view>
+        </view>
+    </scroll-view>
+
+    <!-- 清空记录 -->
+    <view wx:if="{{TabCur==0}}">
+        <!-- 标题 -->
+        <view class="tr bg-w">
+            <view class="th" style="width: 18%!important;">序号</view>
+            <view class="th" style="width: 18%!important;">头像</view>
+            <view class="th">昵称</view>
+            <view class="th">签到次数</view>
+            <view class="th">清空</view>
+        </view>
+        <!-- 没有人签到 -->
+        <block wx:if="{{allListData.length==0}}">
+            <view class="text-center padding text-shadow text-black" style="font-size: 16px;">暂时没有人签到</view>
+        </block>
+        <!-- 列表 -->
+        <block wx:for="{{allListData}}" wx:key="{{code}}">
+            <view class="tr {{index % 2 == 0?'bg-g':''}}">
+                <!-- 序号 -->
+                <view class="td" style="width: 18%!important;">{{index+1}}</view>
+                <!-- 头像 -->
+                <view class="td" style="width: 18%!important;">
+                    <image src="{{item.userInfo.avatarUrl}}"></image>
+                </view>
+                <!-- 昵称 -->
+                <view class="td text-cut">{{item.userInfo.nickName}}</view>
+                <!-- 签到次数 -->
+                <view class="td">{{item.signDaysTimes}}</view>
+                <!-- 清空按钮 -->
+                <view class="td">
+                    <button class="cu-btn bg-cyan round shadow" bindtap="clearSign" data-index="{{index}}">清空</button>
+                </view>
+            </view>
+        </block>
+    </view>
+
+    <!-- 兑换奖品 -->
+    <view wx:if="{{TabCur==1}}">
+        <!-- 标题 -->
+        <view class="tr bg-w">
+            <view class="th" style="width: 18%!important;">序号</view>
+            <view class="th" style="width: 18%!important;">头像</view>
+            <view class="th">昵称</view>
+            <view class="th">签到次数</view>
+            <view class="th">兑换次数</view>
+            <view class="th">兑换</view>
+        </view>
+        <!-- 没有人申请 -->
+        <block wx:if="{{exchangeListData.length==0}}">
+            <view class="text-center padding text-shadow text-black" style="font-size: 16px;">暂时没有人申请</view>
+        </block>
+        <!-- 列表 -->
+        <block wx:for="{{exchangeListData}}" wx:key="{{code}}">
+            <view class="tr {{index % 2 == 0?'bg-g':''}}">
+                <!-- 序号 -->
+                <view class="td" style="width: 18%!important;">{{index+1}}</view>
+                <!-- 头像 -->
+                <view class="td" style="width: 18%!important;">
+                    <image src="{{item.userInfo.avatarUrl}}"></image>
+                </view>
+                <!-- 昵称 -->
+                <view class="td text-cut">{{item.userInfo.nickName}}</view>
+                <!-- 签到次数 -->
+                <view class="td">{{item.signDaysTimes}}</view>
+                <!-- 兑换次数 -->
+                <view class="td">{{item.exchangeInfo.level}}</view>
+                <!-- 清空按钮 -->
+                <view class="td">
+                    <button class="cu-btn bg-cyan round shadow" bindtap="exchange" data-index="{{index}}">兑换</button>
+                </view>
+            </view>
+        </block>
+    </view>
+
+    <!-- 功能列表 -->
+    <view wx:if="{{TabCur==2}}">
+        功能列表 上传奖品图片
+    </view>
+
+    <!-- 显示收获信息 -->
+    <view class="cu-modal {{showAddress==true?'show':''}}">
+        <view class="cu-dialog">
+            <view class="cu-bar bg-white justify-end">
+                <view class="content">兑换礼包</view>
+                <view class="action" bindtap="hideModal">
+                    <text class="cuIcon-close text-red"></text>
+                </view>
+            </view>
+            <view class="padding">
+				<!-- 复制 -->
+				<view style="display: flex;flex-direction: row-reverse;margin-right: 15%;">
+                    <text class="cuIcon-copy lg text-gray" bindtap="copyAddress"></text>
+                </view>
+                <!-- 姓名 -->
+                <view class="address">
+                    <label>姓名：</label>
+                    <text>{{addressInfo.userName}}</text>
+                </view>
+                <!-- 电话 -->
+                <view class="address">
+                    <label>电话：</label>
+                    <text>{{addressInfo.telNumber}}</text>
+                </view>
+                <!-- 地址 -->
+                <view class="address">
+                    <label>住址：</label>
+                    <text>{{addressInfo.provinceName}}{{addressInfo.cityName}}{{addressInfo.countyName}}{{addressInfo.detailInfo}}</text>
+                </view>
+				<!-- 地址 -->
+                <view class="address">
+                    <label>邮编：</label>
+                    <text>{{addressInfo.postalCode}}</text>
+                </view>
+            </view>
+            <view class="cu-bar bg-white">
+                <view class="action margin-0 flex-sub text-green solid-left" bindtap="hideModal">取消</view>|
+                <view class="action margin-0 flex-sub text-blue solid-left" bindtap="confirmExchange">已经发货</view>
+            </view>
+        </view>
+    </view>
+</view>

@@ -1,0 +1,49 @@
+/* miniprogram/pages/sign/sign.wxss */
+
+.head {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/*头像*/
+.userAvatar {
+	overflow: hidden;
+	width: 160rpx;
+	height: 160rpx;
+	margin: 20rpx;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.userNickName {
+	color: #aaa;
+	margin-bottom: 20rpx;
+	font-size: 20px;
+}
+
+.head button {
+	width: 50%;
+	margin-bottom: 20rpx;
+	background-color: rgb(0, 214, 107);
+	color: rgb(255, 255, 255);
+	border-radius: 98rpx;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.line {
+	border: 2px solid #cccccc;
+	opacity: 0.5;
+}
+
+.sign{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	margin: 10px 20px 10px 20px;
+}
