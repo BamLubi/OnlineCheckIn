@@ -45,14 +45,16 @@ Page({
                 openid: app.globalData.openid
             })
             // 如果是管理员，则跳转管理员页面
-            if (this.data.openid == app.globalData.rootOpenId) {
-                wx.redirectTo({
-                    url: '/pages/root/root'
-                })
-            } else {
-                // 查询数据库
-                this.queryTableId()
-            }
+            // if (this.data.openid == app.globalData.rootOpenId) {
+            //     wx.redirectTo({
+            //         url: '/pages/root/root'
+            //     })
+            // } else {
+            //     // 查询数据库
+            //     this.queryTableId()
+            // }
+			// 查询数据库
+			this.queryTableId()
         } else {
             // 异步操作
             app.openidCallback = res => {
@@ -60,14 +62,16 @@ Page({
                     openid: res
                 })
                 // 如果是管理员，则跳转管理员页面
-                if (this.data.openid == app.globalData.rootOpenId) {
-                    wx.redirectTo({
-                        url: '/pages/root/root'
-                    })
-                } else {
-                    // 查询数据库
-                    this.queryTableId()
-                }
+                // if (this.data.openid == app.globalData.rootOpenId) {
+                //     wx.redirectTo({
+                //         url: '/pages/root/root'
+                //     })
+                // } else {
+                //     // 查询数据库
+                //     this.queryTableId()
+                // }
+				// 查询数据库
+				this.queryTableId()
             }
         }
     },

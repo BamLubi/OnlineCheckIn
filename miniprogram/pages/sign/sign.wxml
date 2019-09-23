@@ -1,4 +1,8 @@
 <view>
+	<!-- 公司标志 -->
+	<view class="bg-cyan shadow company">
+		<view class="text-white text-bold text-xl">润泽文化</view>
+	</view>
     <!-- 顶部登录 -->
     <view class="head">
         <block wx:if="{{!hasUserInfo}}">
@@ -37,12 +41,12 @@
             <block wx:elif="{{signDays.all >= 0 && signDays.all < 10}}">
                 <button class="cu-btn bg-blue round shadow lg" disabled>未到申请资格</button>
             </block>
-            <block wx:elif="{{signDays.all >=10 && signDays.all < 20}}">
+            <block wx:elif="{{signDays.all >=10 && signDays.all < 30}}">
                 <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="10">申请10天礼包</button>
             </block>
-            <block wx:elif="{{signDays.all >=20 && signDays.all < 30}}">
+            <!-- <block wx:elif="{{signDays.all >=20 && signDays.all < 30}}">
                 <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="20">申请20天礼包</button>
-            </block>
+            </block> -->
             <block wx:elif="{{signDays.all >=30 && signDays.all < 60}}">
                 <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="30">申请30天礼包</button>
             </block>
@@ -84,11 +88,15 @@
         <view class="text-shadow text-black" style="font-size: 16px;margin: 20rpx;">签到规则</view>
         <!-- 规则 -->
         <view style="font-size: 16px;margin: 22rpx;">
-            <view>1. 同一天只允许签到一次，禁止使用第三方软件代签，一经查处取消以往签到记录。</view>
-            <view>2. 本平台不会主动联系用户兑换奖品，请务必发起申请。</view>
-            <view>3. 申请发起，经后台核实后，将扣除签到次数。</view>
-            <view>4. 兑换奖品以实物为准,以下为样品图。</view>
-            <image src="cloud://lyy1-2mnm7.6c79-lyy1-2mnm7/onlineSignIn/awards/awards.png" style="margin-left: 5%;"></image>
+            <view>1. 每日只允许签到一次，禁止使用第三方软件代签。</view>
+			<view>2. 每日签到必须连续，中途漏签，将从零开始重新签到。</view>
+            <view>3. 本平台不会主动联系用户兑换奖品，请务必发起申请。</view>
+            <view>4. 申请发起，经后台核实后，将扣除签到次数。</view>
+            <view>5. 兑换奖品以实物为准,以下为样品图。</view>
+
+			<!-- 替换成云存储的图片路径 -->
+            <image src="cloud://lyy1-2mnm7.6c79-lyy1-2mnm7/onlineSignIn/awards/award.png" style="margin-left: 5%;height: 904rpx;width: 650rpx;"></image>
+
         </view>
     </view>
 </view>
