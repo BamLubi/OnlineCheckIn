@@ -1,102 +1,82 @@
+<!--miniprogram/pages/sign/sign.wxml-->
 <view>
-	<!-- 公司标志 -->
-	<view class="bg-cyan shadow company">
-		<view class="text-white text-bold text-xl">润泽文化</view>
-	</view>
-    <!-- 顶部登录 -->
-    <view class="head">
-        <block wx:if="{{!hasUserInfo}}">
-            <image class="userAvatar" src='../../images/wechat.png'></image>
-            <button open-type="getUserInfo" bindgetuserinfo="getUserInfo">微信授权登录</button>
-        </block>
-        <block wx:else>
-            <open-data class="userAvatar" type="userAvatarUrl"></open-data>
-            <open-data class="userNickName" type="userNickName"></open-data>
-        </block>
-    </view>
-    <!-- 分割线 -->
-    <view class="line"></view>
-    <!-- 签到 -->
-    <view class="sign">
-        <image src="../../images/sign.png" style="width: 50px;height: 50px;"></image>
-        <button class="cu-btn lines-olive round lg shadow" style="margin-left: 20px;" disabled="{{!hasUserInfo || signDays.today || tableId==null}}" bindtap="signIn">{{signDays.today?'今日已签到':'今日签到'}}</button>
-        <view wx:if="{{hasUserInfo}}" style="margin-left: 20px;font-size: 17px;">
-            <text class="text-shadow text-black">连续签到 {{signDays.all}} 天</text>
+    <!-- 顶部组件 -->
+    <spaceBackground id="spaceBg" hasUserInfo="{{hasUserInfo}}" bindauthorize="authorize" bindclick="signIn">
+    </spaceBackground>
+    <!-- 按钮区 -->
+    <view class="shadow bg-white vi-btn">
+        <view bindtap="applyGift">
+            <image class="img-btn" src="/images/exchange.png" />
+            <text wx:if="{{signDays.hasRequest}}" class="text-red">正在兑奖</text>
+            <text wx:else>兑换奖品</text>
+            <van-toast id="van-toast" />
+        </view>
+        <view bindtap="superDraw">
+            <image class="img-btn" src="/images/award.png" />
+            <text>幸运抽奖</text>
+        </view>
+		<view bindtap="showHistory">
+            <image class="img-btn" src="/images/history.png" />
+            <text>签到历史</text>
+        </view>
+        <view bindtap="naviToRule">
+            <image class="img-btn" src="/images/rule.png" />
+            <text>签到规则</text>
         </view>
     </view>
-    <!-- 分割线 -->
-    <view class="line"></view>
-    <!-- 申请信息 -->
-    <view>
-        <!-- 文本 -->
-        <view class="text-shadow text-black" style="font-size: 16px;margin: 20rpx;">兑换奖励</view>
-        <!-- 按钮 -->
-        <view style="display: flex;flex-direction: row;justify-content: center;">
-            <block wx:if="{{!hasUserInfo}}">
-                <button class="cu-btn bg-blue round shadow lg" disabled>请先授权</button>
-            </block>
-			<block wx:elif="{{hasRequest}}">
-                <button class="cu-btn bg-blue round shadow lg" disabled>正在申请</button>
-            </block>
-            <block wx:elif="{{signDays.all >= 0 && signDays.all < 10}}">
-                <button class="cu-btn bg-blue round shadow lg" disabled>未到申请资格</button>
-            </block>
-            <block wx:elif="{{signDays.all >=10 && signDays.all < 30}}">
-                <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="10">申请10天礼包</button>
-            </block>
-            <!-- <block wx:elif="{{signDays.all >=20 && signDays.all < 30}}">
-                <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="20">申请20天礼包</button>
-            </block> -->
-            <block wx:elif="{{signDays.all >=30 && signDays.all < 60}}">
-                <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="30">申请30天礼包</button>
-            </block>
-            <block wx:elif="{{signDays.all >=60 && signDays.all < 90}}">
-                <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="60">申请60天礼包</button>
-            </block>
-            <block wx:elif="{{signDays.all >=90}}">
-                <button class="cu-btn bg-blue round shadow lg" bindtap="applyGift" data-level="90">申请90天礼包</button>
-            </block>
+    <!-- 奖品图片 -->
+    <image src="/images/title.png" style="width:200rpx;height: 110rpx;margin-left: 20rpx;" />
+    <view class="award bg-white light">
+        <!-- <view class="cu-tag bg-blue radius" style="font-size:28rpx;margin-left: 20rpx;">签到大礼</view> -->
+        <view class="vi-chlid-award">
+            <view class="cu-tag bg-blue radius light">连续签到10天: 签字笔一支</view>
+            <image class="img-award" src="/images/award2.jpg"></image>
         </view>
-        <!-- 升级信息 -->
-        <view class="text-shadow text-red text-center" style="font-size: 15px;margin: 20rpx;">
-            <block wx:if="{{signDays.all >= 0 && signDays.all < 10}}">
-                {{10-signDays.all}}天升至下一级
-            </block>
-            <block wx:elif="{{signDays.all >=10 && signDays.all < 20}}">
-                {{20-signDays.all}}天升至下一级
-            </block>
-            <block wx:elif="{{signDays.all >=20 && signDays.all < 30}}">
-                {{30-signDays.all}}天升至下一级
-            </block>
-            <block wx:elif="{{signDays.all >=30 && signDays.all < 60}}">
-                {{60-signDays.all}}天升至下一级
-            </block>
-            <block wx:elif="{{signDays.all >=60 && signDays.all < 90}}">
-                {{90-signDays.all}}天升至下一级
-            </block>
-            <block wx:elif="{{signDays.all >=90}}">
-                哇！您是我们的忠实用户！
-            </block>
+        <view class="vi-chlid-award">
+            <view class="cu-tag bg-blue radius light">连续签到30天: 韩款护手霜一支</view>
+            <image class="img-award" src="/images/award1.jpg"></image>
         </view>
     </view>
-    <!-- 分割线 -->
-    <view class="line"></view>
-    <view class="line"></view>
-    <!-- 介绍 -->
-    <view>
-        <!-- 文本 -->
-        <view class="text-shadow text-black" style="font-size: 16px;margin: 20rpx;">签到规则</view>
-        <!-- 规则 -->
-        <view style="font-size: 16px;margin: 22rpx;">
-            <view>1. 每日只允许签到一次，禁止使用第三方软件代签。</view>
-			<view>2. 每日签到必须连续，中途漏签，将从零开始重新签到。</view>
-            <view>3. 本平台不会主动联系用户兑换奖品，请务必发起申请。</view>
-            <view>4. 申请发起，经后台核实后，将扣除签到次数。</view>
-            <view>5. 兑换奖品以实物为准,以下为样品图。</view>
+    <!-- 广告 -->
+    <view></view>
+    <!-- 版权 -->
+    <footer />
 
-			<!-- 替换成云存储的图片路径 -->
-            <image src="cloud://lyy1-2mnm7.6c79-lyy1-2mnm7/onlineSignIn/awards/award.png" style="margin-left: 5%;height: 904rpx;width: 650rpx;"></image>
+    <!-- 管理员按钮 -->
+    <button class="cu-button lines-red shadow" style="position: fixed; bottom: 10px;right: 10px;width: 100px;" hidden="{{!isRoot?true:false}}" bindtap="navigateToRoot">管理员</button>
 
+    <!-- 签到成功模态窗 -->
+    <view class="signSuccess cu-modal {{showSignMask?'show':''}}" bindtap="hideSignSuccessMask">
+        <image src="/images/signsuccess.png" />
+        <view class="content">
+            <view class="text-bold text-red text-shadow" style="font-size: 80rpx;margin-bottom: 50rpx;">签到成功</view>
+            <view class="text-bold text-cyan" style="font-size: 40rpx;">连续签到{{signDays.all}}天</view>
+            <view class="text-bold text-cyan" style="font-size: 40rpx;margin-bottom: 20rpx;">
+                <block wx:if="{{signDays.hasRequest}}">正在兑奖中</block>
+                <block wx:elif="{{signDays.all<10}}">还差{{10-signDays.all}}天可以兑奖</block>
+                <block wx:elif="{{signDays.all==10 || signDays.all==30}}">可以兑奖喽</block>
+                <block wx:elif="{{signDays.all<30}}">还差{{30-signDays.all}}天可以兑奖</block>
+            </view>
+            <view class="text-bold text-grey" style="font-size: 30rpx;">中途断签将重新开始计算</view>
+        </view>
+		<text class="btn-close cuIcon-close lg text-gray"/>
+    </view>
+
+    <!-- 幸运抽奖模态框 -->
+    <view class="cu-modal {{showPrizeDraw?'show':''}}">
+        <view class="cu-dialog">
+            <image src="/images/chouj.png" style="height:325rpx;width: 675rpx;"></image>
+            <view class="cu-bar bg-white">
+                <view class="action margin-0 flex-sub  solid-left" bindtap="hidePrizeDrawMask">幸运抽奖即将开放，我知道了</view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 日期选择模态框 -->
+    <view class="cu-modal {{showCalendar?'show':''}}" bindtap="hideHistory">
+        <view class="cu-dialog" style="width: 90%;border-radius: 15px;" catchtap>
+            <!-- 日历 -->
+            <calendar id="calendar" selectedDate="1999-10-10" days-style="{{dayStyle}}" bindOnDayClick="onDayClick" />
         </view>
     </view>
 </view>

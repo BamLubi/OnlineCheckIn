@@ -1,14 +1,15 @@
 {
 	"pages": [
 		"pages/sign/sign",
-		"pages/root/root"
+		"pages/root/root",
+		"pages/rule/rule"
 	],
 	"window": {
 		"backgroundColor": "#F6F6F6",
 		"backgroundTextStyle": "dark",
-		"navigationBarBackgroundColor": "#F6F6F6",
+		"navigationBarBackgroundColor": "#774eb7",
 		"navigationBarTitleText": "签到系统",
-		"navigationBarTextStyle": "black"
+		"navigationBarTextStyle": "white"
 	},
 	"sitemapLocation": "sitemap.json"
 }

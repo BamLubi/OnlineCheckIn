@@ -3,8 +3,8 @@ App({
 	globalData: {
 		openid: null,
 		userInfo: null,
-		hasUserInfo: false,
-		rootOpenId: 'odufi5LQnaBGOAPIlWRIrOWtFvLM'
+		hasUserInfo: false
+		// rootOpenId: 'odufi5LQnaBGOAPIlWRIrOWtFvLM'
 	},
 	onLaunch: function () {
 		var that = this
@@ -17,11 +17,6 @@ App({
 				traceUser: true,
 			})
 		}
-
-		// 展示本地存储能力
-		var logs = wx.getStorageSync('logs') || []
-		logs.unshift(Date.now())
-		wx.setStorageSync('logs', logs)
 
 		// 在已经授权的情况下，获取用户信息
 		wx.getSetting({

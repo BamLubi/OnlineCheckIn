@@ -1,0 +1,133 @@
+/* components/spaceBackground/spaceBackground.wxss */
+
+/* 整体 */
+.head {
+    width: 750rpx;
+    height: 500rpx;
+    background: linear-gradient(#774eb7, #41aff3);
+}
+/* 签到按钮 */
+.btn-sign {
+	position: absolute;
+	top: 200rpx;
+	left: 245rpx;
+	z-index: 20;
+    border-radius: 50%;
+    box-shadow: 0px 2px 4px 2px #ddd;
+    width: 270rpx;
+    height: 270rpx;
+    line-height: 270rpx;
+	color: white;
+    background: linear-gradient(60deg, #f2bc83, #f2bc83, #f38cae, #9470d3, #458cdc);
+}
+.btn-hasSign{
+	position: absolute;
+	display:flex;
+	flex-direction:column;
+	justify-content: flex-start;
+	align-items: center;
+	top: 200rpx;
+	left: 245rpx;
+	z-index: 20;
+    border-radius: 50%;
+    box-shadow: 0px 2px 4px 2px #ddd;
+    width: 270rpx;
+    height: 270rpx;
+    line-height: 50rpx;
+	padding-top: 85rpx;
+	color: white;
+    background: linear-gradient(60deg, #f2bc83, #f2bc83, #f38cae, #9470d3, #458cdc);
+}
+.btn-hasSign-mask{
+	position: absolute;
+	top: 200rpx;
+	left: 245rpx;
+	z-index: 21;
+    border-radius: 50%;
+    width: 270rpx;
+    height: 270rpx;
+	background-color: #f38cae;
+	opacity: 0.3;
+}
+/* ufo */
+.vi-ufo{
+	position: absolute;
+	z-index: 20;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.vi-ufo image{
+	width: 70rpx;
+	height: 70rpx;
+	z-index: 1;
+}
+.vi-ufo view{
+	position: relative;
+	left: -40rpx;
+	z-index: 0;
+	padding-left: 40rpx;
+	padding-right: 15rpx;
+	border-top-right-radius: 10rpx;
+	border-bottom-right-radius: 10rpx;
+
+	background-color: #f2bc83;
+	color: white;
+	opacity: 0.7;
+}
+/* 头像 */
+.vi-avatar{
+	position: absolute;
+	top: 70rpx;
+	left: 10rpx;
+	z-index: 19;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+.vi-avatar image{
+	width: 100rpx;
+	height: 100rpx;
+}
+.vi-avatar text{
+	margin-left: 10rpx;
+	color: white;
+	font-size: 30rpx;
+}
+.userAvatar {
+	overflow: hidden;
+	width: 100rpx;
+	height: 100rpx;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+}
+.userNickName {
+	margin-left: 10rpx;
+	color: white;
+	font-size: 30rpx;
+}
+/* 望远镜 */
+.img-telescope{
+	position: absolute;
+	top: 407rpx;
+	left: 10rpx;
+	width: 100rpx;
+	height: 100rpx;
+	z-index: 20;
+}
+.img-star{
+	position: absolute;
+	width: 750rpx;
+    height: 500rpx;
+	z-index: 18;
+}
+.img-star2{
+	position: absolute;
+	left: 415rpx;
+	top: -117rpx;
+	width: 85rpx;
+    height: 117rpx;
+	z-index: 18;
+	opacity: 0.3;
+}

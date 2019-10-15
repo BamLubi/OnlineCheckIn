@@ -1,0 +1,17 @@
+<!--miniprogram/pages/rule/rule.wxml-->
+<view style="margin: 20rpx;z-index:2;">
+	<!-- 规则-->
+	<view>
+		<view class="text-xxl text-black text-shadow text-bold text-left">签到规则</view>
+		<!-- 分隔符 -->
+		<view class="divider" />
+		<!-- 内容 -->
+		<view class="text-left" style="margin: 10rpx 0 0 20rpx;font-size: 37rpx;">
+			<view>1. 同一用户每天限签到一次，禁止使用第三方软件代签，一经查处取消以往签到记录。</view>
+			<view>2. 本平台不会主动联系用户兑换奖品，请务必发起申请。</view>
+			<view>3. 申请发起，经后台核实后将扣除签到次数并发出奖品。</view>
+			<view>4. 奖品以实物为准。</view>
+			<view>5. 本活动最终解释权归石家庄润哲文化传播有限公司所有。</view>
+		</view>
+	</view>
+</view>

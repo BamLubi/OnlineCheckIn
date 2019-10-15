@@ -1,4 +1,8 @@
 {
-  "usingComponents": {},
-  "enablePullDownRefresh": true
+	"usingComponents": {
+		"spaceBackground": "../../components/spaceBackground/spaceBackground",
+		"van-toast": "../../dist/toast/index",
+		"footer": "../../components/footer/footer",
+		"calendar": "../../components/calendar/calendar"
+	}
 }

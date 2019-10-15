@@ -1,55 +1,63 @@
 /* miniprogram/pages/sign/sign.wxss */
 
-.head {
+.vi-btn{
+	margin: 15rpx;
+	padding: 10rpx;
+	border-radius: 20rpx;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+}
+
+.vi-btn view{
 	display: flex;
 	flex-direction: column;
+	justify-content: space-evenly;
 	align-items: center;
 }
 
-/*头像*/
-.userAvatar {
-	overflow: hidden;
-	width: 160rpx;
-	height: 160rpx;
-	margin: 20rpx;
-	border-radius: 50%;
-	border: 2px solid #fff;
-	box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+.vi-btn view image{
+	width: 70rpx;
+	height: 70rpx;
 }
 
-.userNickName {
-	color: #aaa;
-	margin-bottom: 20rpx;
-	font-size: 20px;
-}
-
-.head button {
-	width: 50%;
-	margin-bottom: 20rpx;
-	background-color: rgb(0, 214, 107);
-	color: rgb(255, 255, 255);
-	border-radius: 98rpx;
+.award{
+	padding-bottom: 10rpx;
 	display: flex;
-	flex-direction: row;
-	align-items: center;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: flex-start;
+}
+
+.award .vi-chlid-award{
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.award .vi-chlid-award view{
+	font-size: 28rpx;
+}
+
+.signSuccess image{
+	width: 750rpx;
+	height: 623.59rpx;
+	top: 250rpx;
+}
+
+.signSuccess .content{
+	position: absolute;
+	top: 320rpx;
+	left: 145rpx;
+	height: 500rpx;
+	width: 500rpx;
+	display: flex;
+	flex-direction: column;
 	justify-content: center;
-}
-
-.line {
-	border: 2px solid #cccccc;
-	opacity: 0.5;
-}
-
-.sign{
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
 	align-items: center;
-	margin: 10px 20px 10px 20px;
 }
 
-.company{
-	border-bottom-left-radius: 20rpx;
-	border-bottom-right-radius: 20rpx;
-	padding: 1% 0 1% 2%;
+.signSuccess .btn-close{
+	width: 100rpx;
+	height: 100rpx;
 }

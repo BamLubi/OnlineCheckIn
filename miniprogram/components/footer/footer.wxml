@@ -1,0 +1,4 @@
+<!--component/footer/footer.wxml-->
+<view class="bottom">
+    <text>Copyright © 2019 石家庄润哲文化传播有限公司</text>
+</view>

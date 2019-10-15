@@ -1,0 +1,37 @@
+<!--components/spaceBackground/spaceBackground.wxml-->
+<view class="head">
+	<!-- 顶部滚动 -->
+	<view class="vi-ufo">
+		<image src="images/ufo.png"></image>
+		<view>石家庄润哲文化传播有限公司</view>
+	</view>
+	<!-- 头像-昵称 -->
+	<view class="vi-avatar">
+		<block wx:if="{{!hasUserInfo}}">
+			<image class="img-avatar" src="images/wechat.png"></image>
+			<text>请先授权</text>
+		</block>
+		<block wx:else>
+            <open-data class="userAvatar" type="userAvatarUrl"></open-data>
+            <open-data class="userNickName" type="userNickName"></open-data>
+        </block>
+	</view>
+	<!-- 按钮区：授权、签到 -->
+	<block wx:if="{{!hasUserInfo}}">
+		<button class="btn-sign" open-type="getUserInfo" style="font-weight: bold;font-size: 50rpx;" bindgetuserinfo="getUserInfo">授 权</button>
+	</block>
+	<block wx:elif="{{!signDays}}">
+		<button class="btn-sign" style="font-weight: bold;font-size: 50rpx;" bindtap="sign">签 到</button>
+	</block>
+	<block wx:elif="{{signDays}}">
+		<view class="btn-hasSign-mask" />
+	<view class="btn-hasSign">
+			<view class="text-shadow text-white" style="font-weight: bold;font-size:50rpx;">已签到</view>
+			<view style="margin-top: 10rpx;font-size:45rpx;">{{signDays}}天</view>
+		</view>
+	</block>
+	<!-- 背景 -->
+	<image class="img-star" src="images/star.png" />
+	<image class="img-telescope" src="images/test.png" />
+	<image animation="{{animationData.star}}" class="img-star2" src="images/star2.png" />
+</view>

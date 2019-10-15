@@ -1,7 +1,7 @@
 <!--miniprogram/pages/root/root.wxml-->
 <view class="table">
     <!-- 顶部导航栏 -->
-    <scroll-view scroll-x class="nav" style="background-color: #36f;">
+    <scroll-view scroll-x class="nav">
         <view class="flex text-center">
             <view class="cu-item flex-sub {{index==TabCur?'text-white cur':''}}" wx:for="{{TabCurText}}" wx:key bindtap="tabSelect" data-id="{{index}}">
                 {{item}}
