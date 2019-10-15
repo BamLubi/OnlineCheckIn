@@ -3,8 +3,8 @@ App({
 	globalData: {
 		openid: null,
 		userInfo: null,
-		hasUserInfo: false
-		// rootOpenId: 'odufi5LQnaBGOAPIlWRIrOWtFvLM'
+		hasUserInfo: false,
+		rootOpenId: 'odufi5LQnaBGOAPIlWRIrOWtFvLM'
 	},
 	onLaunch: function () {
 		var that = this

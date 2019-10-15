@@ -503,7 +503,7 @@ Page({
     navigateToRoot: function() {
         if (this.data.openid == app.globalData.rootOpenId) {
             wx.navigateTo({
-                url: '/pages/root/root'
+                url: '/rootPackage/pages/root/root'
             })
         }
     },
