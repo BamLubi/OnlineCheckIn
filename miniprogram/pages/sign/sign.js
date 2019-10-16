@@ -526,7 +526,7 @@ Page({
 // 选中的日期构造器
 function CreateDayStyleObject(day) {
     this.id = day
-    this.style = 'color: red;background-color: yellow;'
+    this.style = 'color: red;background-color: yellow;font-weight:bold;'
 }
 // 加减天数
 function mathChangeDate(date, method, days) {
