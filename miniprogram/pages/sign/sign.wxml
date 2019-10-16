@@ -63,8 +63,8 @@
     </view>
 
     <!-- 幸运抽奖模态框 -->
-    <view class="cu-modal {{showPrizeDraw?'show':''}}">
-        <view class="cu-dialog">
+    <view class="cu-modal {{showPrizeDraw?'show':''}}" bindtap="hidePrizeDrawMask">
+        <view class="cu-dialog" catchtap>
             <image src="/images/chouj.png" style="height:325rpx;width: 675rpx;"></image>
             <view class="cu-bar bg-white">
                 <view class="action margin-0 flex-sub  solid-left" bindtap="hidePrizeDrawMask">幸运抽奖即将开放，我知道了</view>
