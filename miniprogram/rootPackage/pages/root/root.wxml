@@ -3,7 +3,7 @@
     <!-- 顶部导航栏 -->
     <scroll-view scroll-x class="nav">
         <view class="flex text-center">
-            <view class="cu-item flex-sub {{index==TabCur?'text-white cur':''}}" wx:for="{{TabCurText}}" wx:key bindtap="tabSelect" data-id="{{index}}">
+            <view class="cu-item text-bold flex-sub {{index==TabCur?'text-white cur':''}}" wx:for="{{TabCurText}}" wx:key bindtap="tabSelect" data-id="{{index}}">
                 {{item}}
             </view>
         </view>
@@ -12,7 +12,7 @@
     <!-- 清空记录 -->
     <view wx:if="{{TabCur==0}}">
         <!-- 标题 -->
-        <view class="tr bg-w">
+        <view class="tr" style="background-color: #774eb7;">
             <view class="th" style="width: 18%!important;">序号</view>
             <view class="th" style="width: 18%!important;">头像</view>
             <view class="th">昵称</view>
@@ -47,7 +47,7 @@
     <!-- 兑换奖品 -->
     <view wx:if="{{TabCur==1}}">
         <!-- 标题 -->
-        <view class="tr bg-w">
+        <view class="tr bg-mauve">
             <view class="th" style="width: 18%!important;">序号</view>
             <view class="th" style="width: 18%!important;">头像</view>
             <view class="th">昵称</view>
@@ -84,10 +84,24 @@
 
     <!-- 功能列表 -->
     <view wx:if="{{TabCur==2}}">
-        功能列表 上传奖品图片
+        <view class="functions shadow radius bg-white">
+            <!-- 标题 -->
+            <view class="functions-title">
+                <text class='cuIcon-titles text-orange '></text>
+                <text>导出Excel</text>
+            </view>
+            <!-- 分割线 -->
+            <view class="bg-gray" style="height:4rpx;width:90%;margin-left:5%;"></view>
+            <!-- 按钮 -->
+            <view class="functions-btn">
+                <button class="cu-btn line-green round shadow" bindtap="exportAll">导出所有签到信息</button>
+                <button class="cu-btn line-green round shadow" bindtap="exportExchange">导出所有兑奖信息</button>
+            </view>
+        </view>
     </view>
 
-    <!-- 显示收获信息 -->
+    <!-- 子页面 -->
+    <!-- 兑换奖品:显示收获信息 -->
     <view class="cu-modal {{showAddress==true?'show':''}}">
         <view class="cu-dialog">
             <view class="cu-bar bg-white justify-end">
@@ -97,8 +111,8 @@
                 </view>
             </view>
             <view class="padding">
-				<!-- 复制 -->
-				<view style="display: flex;flex-direction: row-reverse;margin-right: 15%;">
+                <!-- 复制 -->
+                <view style="display: flex;flex-direction: row-reverse;margin-right: 15%;">
                     <text class="cuIcon-copy lg text-gray" bindtap="copyAddress"></text>
                 </view>
                 <!-- 姓名 -->
@@ -116,7 +130,7 @@
                     <label>住址：</label>
                     <text>{{addressInfo.provinceName}}{{addressInfo.cityName}}{{addressInfo.countyName}}{{addressInfo.detailInfo}}</text>
                 </view>
-				<!-- 地址 -->
+                <!-- 地址 -->
                 <view class="address">
                     <label>邮编：</label>
                     <text>{{addressInfo.postalCode}}</text>
