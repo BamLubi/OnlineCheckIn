@@ -42,6 +42,12 @@
                 </view>
             </view>
         </block>
+		<!-- 底部信息 -->
+		<block wx:if="{{allListLength>=20}}">
+			<view wx:if="{{!allListHasMore}}" class="cu-load over" />
+			<view wx:elif="{{allListIsLoad}}" class="cu-load loading" />
+			<view wx:else class="cu-load text-center text-black" bindtap="loadMore">点我加载更多</view>
+		</block>
     </view>
 
     <!-- 兑换奖品 -->
@@ -56,9 +62,7 @@
             <view class="th">兑换</view>
         </view>
         <!-- 没有人申请 -->
-        <block wx:if="{{exchangeListData.length==0}}">
-            <view class="text-center padding text-shadow text-black" style="font-size: 16px;">暂时没有人申请</view>
-        </block>
+        <view wx:if="{{exchangeListData.length==0}}" class="text-center padding text-shadow text-black" style="font-size: 16px;">暂时没有人申请</view>
         <!-- 列表 -->
         <block wx:for="{{exchangeListData}}" wx:key="{{code}}">
             <view class="tr {{index % 2 == 0?'bg-g':''}}">
@@ -80,6 +84,12 @@
                 </view>
             </view>
         </block>
+		<!-- 底部信息 -->
+		<block wx:if="{{exchangeListLength>=20}}">
+			<view wx:if="{{!exchangeListHasMore}}" class="cu-load over" />
+			<view wx:elif="{{exchangeListIsLoad}}" class="cu-load loading" />
+			<view wx:else class="cu-load text-center text-black" bindtap="loadMore">点我加载更多</view>
+		</block>
     </view>
 
     <!-- 功能列表 -->

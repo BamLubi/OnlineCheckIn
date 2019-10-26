@@ -1,4 +1,5 @@
 /* components/spaceBackground/spaceBackground.wxss */
+@import "/app.wxss";
 
 /* 整体 */
 .head {

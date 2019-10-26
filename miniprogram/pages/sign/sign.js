@@ -1,6 +1,19 @@
 // miniprogram/pages/sign/sign.js
 import Toast from '../../dist/toast/toast'
 const app = getApp()
+const cloudDB = require('../../promise/wxCloudDB.js')
+const api = require('../../promise/wxAPI.js')
+
+var DefaultSignTable = {
+    signData: [],
+    signDaysTimes: 0,
+    userInfo: null,
+    exchangeInfo: {
+        date: new Date(),
+        level: 0,
+        hasRequest: false
+    }
+}
 
 Page({
     /**
@@ -22,7 +35,7 @@ Page({
         showSignMask: false, // 签到成功的模态窗
         showPrizeDraw: false,
         showCalendar: false,
-		dayStyle: []
+        dayStyle: []
     },
 
     /**
@@ -51,7 +64,7 @@ Page({
                 openid: app.globalData.openid
             })
             // 如果是管理员，则跳转管理员页面
-            if (this.data.openid == app.globalData.rootOpenId) {
+            if (app.globalData.rootOpenId.indexOf(this.data.openid) != -1) {
                 this.setData({
                     isRoot: true
                 })
@@ -65,7 +78,7 @@ Page({
                     openid: res
                 })
                 // 如果是管理员，则跳转管理员页面
-                if (this.data.openid == app.globalData.rootOpenId) {
+                if (app.globalData.rootOpenId.indexOf(this.data.openid) != -1) {
                     this.setData({
                         isRoot: true
                     })
@@ -151,14 +164,17 @@ Page({
      */
     queryTableId: function() {
         var that = this
-        const db = wx.cloud.database()
         // 查询用户表_id
-        db.collection('onlineCheckIn').where({
-            _openid: this.data.openid
-        }).get({
-            success: res => {
-                if (res.data.length != 0) {
-                    console.log('[数据库] [查询用户表] 用户表_id: ', res.data[0]._id)
+        cloudDB.GetWxCloudDB('onlineCheckIn', {
+                _openid: that.data.openid
+            })
+            .then(
+                // 有记录
+                function(res) {
+					
+					if (res.data[0].balance==undefined){
+						console.log("可以等于undefined")
+					}
                     // 设置：用户表_id，签到记录
                     that.setData({
                         tableId: res.data[0]._id,
@@ -166,76 +182,43 @@ Page({
                         ["signDays.hasRequest"]: res.data[0].exchangeInfo.hasRequest,
                         ["signDays.all"]: res.data[0].signDaysTimes
                     })
-                    // 同步请求存储缓存
-                    wx.setStorageSync('tableid', res.data[0]._id)
-                    // 判断今天和昨天是否签到
-                    that.hasSignTodayAndYesterday()
                     // 由于该方法需要复用，设置回调函数
                     if (that.queryTableIdCallback) {
                         that.queryTableIdCallback(res.data[0])
                     }
-                } else if (res.data.length == 0) {
-                    console.log('[数据库] [查询用户表] 未查询到表')
-                    // 新建用户表
+                    // 判断今天和昨天是否签到
+                    that.hasSignTodayAndYesterday()
+                },
+                // 无记录，新建表
+                function(res) {
+                    // 确定用户个人信息
                     if (that.data.hasUserInfo) {
-                        that.addNewSignTable()
+                        DefaultSignTable.userInfo = that.data.userInfo
                     } else {
                         that.spaceBg = that.selectComponent("#spaceBg")
                         that.spaceBg.getUserInfoCallback = res => {
                             that.authorize(res)
-                            that.addNewSignTable()
+                            DefaultSignTable.userInfo = that.data.userInfo
                         }
                     }
+                    return cloudDB.AddWxCloudDB('onlineCheckIn', DefaultSignTable).then(res => {
+                        return that.queryTableId()
+                    })
                 }
-                //  停止下拉刷新
-                wx.stopPullDownRefresh()
-            },
-            fail: err => {
-                console.error('[数据库] [查询用户表] 失败：', err)
-            }
-        })
-    },
-    /**
-     * 新建用户签到表，无需传递openid
-     */
-    addNewSignTable: function() {
-        const db = wx.cloud.database()
-        // 新建表
-        db.collection('onlineCheckIn').add({
-            // data 字段表示需新增的 JSON 数据
-            data: {
-                signData: [], //用于存储签到日期
-                signDaysTimes: 0,
-                userInfo: this.data.userInfo,
-                exchangeInfo: {
-                    date: new Date(),
-                    level: 0,
-                    hasRequest: false
-                }
-            },
-            success: res => {
-                // res 是一个对象，其中有 _id 字段标记刚创建的记录的 id
-                console.log('[数据库] [新增用户表] 成功：', res)
-                this.queryTableId()
-            },
-            fail: err => {
-                console.error('[数据库] [新增用户表] 失败：', err)
-            }
-        })
+            )
     },
 
     /**
      * 今日签到，需确保已经有用户表
      */
     addTodaySignInfo: function() {
-        const db = wx.cloud.database()
-        const _ = db.command
+        var that = this
         // 如果已经签到，则退出
-        if (this.data.signDays.today == true){
-			// 隐藏模态框
-			wx.hideLoading()
-			return
-		}
+        if (this.data.signDays.today == true) {
+            // 隐藏模态框
+            wx.hideLoading()
+            return
+        }
         // 当前日期
         var now = new Date()
         var newSignDataList = new Array()
@@ -245,35 +228,28 @@ Page({
             newSignDataList.push(now)
             allTimes = 1
         } else {
-			newSignDataList = JSON.parse(JSON.stringify(this.data.allSignData))
+            newSignDataList = JSON.parse(JSON.stringify(this.data.allSignData))
             newSignDataList.push(now)
         }
         // 数据库访问
-        db.collection('onlineCheckIn').doc(this.data.tableId).update({
-            data: {
-                signData: newSignDataList,
-                signDaysTimes: allTimes
-            },
-            success: res => {
-                console.log('[数据库] [追加日期] 成功：', res)
-                // 隐藏模态框
-                wx.hideLoading()
-                // 改变状态
-                this.setData({
-                    ["signDays.today"]: true,
-                    ["signDays.all"]: allTimes,
-                    showSignMask: true,
-					allSignData: newSignDataList
-                })
-                // 签到成功后，调用组件方法
-                this.spaceBg = this.selectComponent("#spaceBg")
-                this.spaceBg.setHasSign(allTimes)
-				// 签到成功后，更新日历
-				this.createDayStyle()
-            },
-            fail: err => {
-                console.error('[数据库] [追加日期] 失败：', err)
-            }
+        cloudDB.UpdateWxCloudDB('onlineCheckIn', that.data.tableId, {
+            signData: newSignDataList,
+            signDaysTimes: allTimes
+        }, '新增今日签到').then(res => {
+            // 隐藏模态框
+            wx.hideLoading()
+            // 改变状态
+            that.setData({
+                ["signDays.today"]: true,
+                ["signDays.all"]: allTimes,
+                showSignMask: true,
+                allSignData: newSignDataList
+            })
+            // 签到成功后，调用组件方法
+            that.spaceBg = that.selectComponent("#spaceBg")
+            that.spaceBg.setHasSign(allTimes)
+            // 签到成功后，更新日历
+            that.createDayStyle()
         })
     },
 
@@ -334,18 +310,10 @@ Page({
                 content: '昨日未签到,签到已清零'
             })
             // 数据库清空记录
-            db.collection('onlineCheckIn').doc(this.data.tableId).update({
-                data: {
-                    signData: new Array(),
-                    signDaysTimes: 0
-                },
-                success: res => {
-                    console.log('[数据库] [清空签到] 成功：', res)
-                },
-                fail: err => {
-                    console.error('[数据库] [清空签到] 失败：', err)
-                }
-            })
+            cloudDB.UpdateWxCloudDB('onlineCheckIn', this.data.tableId, {
+                signData: new Array(),
+                signDaysTimes: 0
+            }, '清空记录').then()
         }
         // 赋值
         this.setData({
@@ -363,8 +331,6 @@ Page({
      */
     applyGift: function() {
         var that = this
-        const db = wx.cloud.database()
-        const _ = db.command
         // 获取参数
         var level = this.data.signDays.all
         // 小于10天
@@ -381,69 +347,38 @@ Page({
         } else {
             level = level < 30 ? 10 : 30
             // 显示选择框
-            wx.showModal({
-                // title: '温馨提示',
-                content: '确认申请兑换 ' + level + " 天大礼包嘛？",
-                success: function(res) {
-                    if (res.confirm) {
-                        console.log("确认兑换")
-                        // 确定收货地址
-                        if (wx.chooseAddress) {
-                            wx.chooseAddress({
-                                success: function(res) {
-                                    console.log("[个人信息] [获取地址] 成功：", res)
-                                    wx.showLoading({
-                                        title: '申请中',
-                                    })
-                                    // 发起数据库请求
-                                    db.collection('onlineCheckIn').doc(that.data.tableId).update({
-                                        data: {
-                                            ["exchangeInfo.date"]: new Date(),
-                                            ["exchangeInfo.level"]: parseInt(level),
-                                            ["exchangeInfo.hasRequest"]: true,
-                                            "address": res
-                                        },
-                                        success: res => {
-                                            console.log('[数据库] [添加兑换] 成功：', res)
-                                            // 隐藏模态框
-                                            wx.hideLoading()
-                                            // 改变状态
-                                            that.setData({
-                                                ["signDays.hasRequest"]: true
-                                            })
-                                            // 反馈
-                                            wx.showToast({
-                                                title: '申请成功',
-                                                icon: 'success',
-                                                duration: 1000
-                                            })
-                                        },
-                                        fail: err => {
-                                            console.error('[数据库] [添加兑换] 失败：', err)
-                                            // 反馈
-                                            wx.hideLoading()
-                                            Toast({
-                                                message: '服务器异常，请稍后再试',
-                                                duration: 1000
-                                            })
-                                        }
-                                    })
-                                },
-                                fail: function(err) {
-                                    console.log("[个人信息] [获取地址] 取消：", err)
-                                }
-                            })
-                        } else {
-                            console.log('当前微信版本不支持chooseAddress');
-                            Toast({
-                                message: '请升级微信到最新版本',
-                                duration: 1000
-                            })
-                        }
-                    } else if (res.cancel) {
-                        console.log("取消")
-                    }
-                }
+            api.ShowModal('', '确认申请兑换' + level + '天大礼包嘛').then(res => {
+                return api.ChooseAddress()
+            }).then(res => {
+                wx.showLoading({
+                    title: '申请中'
+                })
+                return cloudDB.UpdateWxCloudDB('onlineCheckIn', that.data.tableId, {
+                    ["exchangeInfo.date"]: new Date(),
+                    ["exchangeInfo.level"]: parseInt(level),
+                    ["exchangeInfo.hasRequest"]: true,
+                    "address": res
+                }, '兑换奖品')
+            }).then(res => {
+                // 隐藏模态框
+                wx.hideLoading()
+                // 改变状态
+                that.setData({
+                    ["signDays.hasRequest"]: true
+                })
+                // 反馈
+                wx.showToast({
+                    title: '申请成功',
+                    icon: 'success',
+                    duration: 1000
+                })
+            }).catch(err => {
+                // 反馈
+                wx.hideLoading()
+                Toast({
+                    message: '服务器异常，请稍后再试',
+                    duration: 1000
+                })
             })
         }
     },
@@ -463,24 +398,24 @@ Page({
             showPrizeDraw: true
         })
     },
-	/**
-	 * 显示签到记录日历
-	 */
-	showHistory: function(){
-		this.calendar = this.selectComponent("#calendar")
-		this.calendar.refreshCalendar()
-		this.setData({
-			showCalendar: true
-		})
-	},
-	/**
-	 * 隐藏签到记录日历
-	 */
-	hideHistory: function () {
-		this.setData({
-			showCalendar: false
-		})
-	},
+    /**
+     * 显示签到记录日历
+     */
+    showHistory: function() {
+        this.calendar = this.selectComponent("#calendar")
+        this.calendar.refreshCalendar()
+        this.setData({
+            showCalendar: true
+        })
+    },
+    /**
+     * 隐藏签到记录日历
+     */
+    hideHistory: function() {
+        this.setData({
+            showCalendar: false
+        })
+    },
     /**
      * 隐藏签到成功模态框
      */
@@ -514,12 +449,12 @@ Page({
         let days = new Array()
         for (var i = 0; i < this.data.allSignData.length; i++) {
             days[i] = new Date(this.data.allSignData[i])
-            days[i] = days[i].getFullYear() + "-" + (days[i].getMonth()+1 < 10 ? '0' + days[i].getMonth()+1 : days[i].getMonth()+1) + "-" + (days[i].getDate()<10 ? '0' + days[i].getDate() : days[i].getDate())
-			days[i] = new CreateDayStyleObject(days[i])
+            days[i] = days[i].getFullYear() + "-" + (days[i].getMonth() + 1 < 10 ? '0' + days[i].getMonth() + 1 : days[i].getMonth() + 1) + "-" + (days[i].getDate() < 10 ? '0' + days[i].getDate() : days[i].getDate())
+            days[i] = new CreateDayStyleObject(days[i])
         }
-		this.setData({
-			dayStyle: days
-		})
+        this.setData({
+            dayStyle: days
+        })
     }
 })
 

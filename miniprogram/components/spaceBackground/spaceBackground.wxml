@@ -18,10 +18,10 @@
 	</view>
 	<!-- 按钮区：授权、签到 -->
 	<block wx:if="{{!hasUserInfo}}">
-		<button class="btn-sign" open-type="getUserInfo" style="font-weight: bold;font-size: 50rpx;" bindgetuserinfo="getUserInfo">授 权</button>
+		<button class="btn-sign" hover-class="round-hover" open-type="getUserInfo" style="font-weight: bold;font-size: 50rpx;" bindgetuserinfo="getUserInfo">授 权</button>
 	</block>
 	<block wx:elif="{{!signDays}}">
-		<button class="btn-sign" style="font-weight: bold;font-size: 50rpx;" bindtap="sign">签 到</button>
+		<button class="btn-sign" hover-class="round-hover" style="font-weight: bold;font-size: 50rpx;" bindtap="sign">签 到</button>
 	</block>
 	<block wx:elif="{{signDays}}">
 		<view class="btn-hasSign-mask" />

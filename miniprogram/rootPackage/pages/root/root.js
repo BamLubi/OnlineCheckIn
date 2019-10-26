@@ -1,5 +1,7 @@
 // miniprogram/pages/root/root.js
 const app = getApp()
+const exportFile = require("../../utils/exportFile.js")
+const functions = require("../../utils/functions.js")
 
 Page({
 
@@ -7,8 +9,14 @@ Page({
      * 页面的初始数据
      */
     data: {
-        allListData: [], // 清空记录的列表
+        allListData: [], // 所有签到列表
+		allListLength: 0, // 所有签到列表长度
+		allListHasMore: true, // 所有签到列表是否含有更多数据
+		allListIsLoad: false, // 所有签到列表是否在加载
         exchangeListData: [], // 兑换奖品列表
+		exchangeListLength: 0, // 兑换奖品列表长度
+		exchangeListHasMore: true, // 兑换奖品列表是否含有更多数据
+		exchangeListIsLoad: false, // 兑换奖品列表是否在加载
         TabCur: 0,
         scrollLeft: 0,
         TabCurText: ["清空记录", "兑换奖品", "功能列表"],
@@ -60,9 +68,21 @@ Page({
         console.log("管理员下拉刷新")
         if (this.data.TabCur == 0) {
             // 获取所有签到信息
+			// 清空之前获取的信息
+			this.setData({
+				allListData: [],
+				allListLength: 0,
+				allListHasMore: true
+			})
             this.getAllSignData()
         } else if (this.data.TabCur == 1) {
             // 获取所有兑奖信息
+			// 清空之前获取的信息
+			this.setData({
+				exchangeListData: [],
+				exchangeListLength: 0,
+				exchangeListHasMore: true
+			})
             this.getAllExchangeData()
         }
     },
@@ -71,8 +91,31 @@ Page({
      * 页面上拉触底事件的处理函数
      */
     onReachBottom: function() {
-
+		
     },
+	/**
+	 * 加载更多
+	 */
+	loadMore: function(){
+		console.log("加载更多")
+		if (this.data.TabCur == 0) {
+			// 所有签到信息
+			if (this.data.exchangeListHasMore) {
+				this.setData({
+					allListIsLoad: true
+				})
+				this.getAllSignData()
+			}
+		} else if (this.data.TabCur == 1) {
+			// 兑奖信息页面
+			if (this.data.exchangeListHasMore) {
+				this.setData({
+					exchangeListIsLoad: true
+				})
+				this.getAllExchangeData()
+			}
+		}
+	},
 
     /**
      * 用户点击右上角分享
@@ -151,8 +194,8 @@ Page({
      * 获取所有兑奖信息
      */
     getAllExchangeData: function() {
-        // 获取所有人信息
         const db = wx.cloud.database()
+		const That = this
         // 查询所有兑换奖品数据，最多只会传回20个数组
         db.collection('onlineCheckIn')
             .where({
@@ -167,18 +210,37 @@ Page({
                 ["userInfo.avatarUrl"]: true,
                 address: true
             })
+			.skip(That.data.exchangeListLength)
+			.limit(20)
             .orderBy('exchangeInfo.date', 'asc')
             .get({
                 success: res => {
-                    console.log('[数据库] [查询所有兑奖] 成功：', res)
-                    this.setData({
-                        exchangeListData: res.data
-                    })
+                    console.log('[数据库][查询所有兑奖] 成功：', res)
+					// 没有更多数据
+					if(res.data.length==0){
+						console.log("么有更多数据了")
+						That.setData({
+							exchangeListHasMore: false
+						})
+					}else{
+						// 拼接字符串
+						let newList = That.data.exchangeListData.concat(res.data)
+						let length = That.data.exchangeListLength += res.data.length
+						// 赋值
+						That.setData({
+							exchangeListData: newList,
+							exchangeListLength: length
+						})
+					}
                     // 关闭下拉刷新
                     wx.stopPullDownRefresh()
+					// 关闭正在加载
+					this.setData({
+						exchangeListIsLoad: false
+					})
                 },
                 fail: err => {
-                    console.error('[数据库] [查询所有兑奖] 失败：', err)
+                    console.error('[数据库][查询所有兑奖] 失败：', err)
                 }
             })
     },
@@ -190,6 +252,7 @@ Page({
         // 获取所有人信息
         const db = wx.cloud.database()
         const _ = db.command
+		const That = this
         // 查询所有用户的签到数据，最多只会传回20个数组
         db.collection('onlineCheckIn')
             .where({
@@ -201,15 +264,34 @@ Page({
                 ["userInfo.nickName"]: true,
                 ["userInfo.avatarUrl"]: true
             })
+			.skip(That.data.allListLength)
+			.limit(20)
             .orderBy('signDaysTimes', 'desc')
             .get({
                 success: res => {
-                    // console.log('[数据库] [查询所有签到] 成功：', res)
-                    this.setData({
-                        allListData: res.data
-                    })
+                    console.log('[数据库] [查询所有签到] 成功：', res)
+					// 没有更多数据
+					if (res.data.length == 0) {
+						console.log("么有更多数据了")
+						That.setData({
+							allListHasMore: false
+						})
+					} else {
+						// 拼接字符串
+						let newList = That.data.allListData.concat(res.data)
+						let length = That.data.allListLength += res.data.length
+						// 赋值
+						That.setData({
+							allListData: newList,
+							allListLength: length
+						})
+					}
                     // 关闭下拉刷新
                     wx.stopPullDownRefresh()
+					// 关闭正在加载
+					this.setData({
+						allListIsLoad: false
+					})
                 },
                 fail: err => {
                     console.error('[数据库] [查询所有签到] 失败：', err)
@@ -331,184 +413,18 @@ Page({
      * 复制地址信息
      */
     copyAddress: function() {
-        let that = this.data.addressInfo
-        var stringForCopy = "收件人:" + that.userName + ";电话:" + that.telNumber + ";地址:" + that.provinceName + that.cityName + that.countyName + that.detailInfo + ";邮编:" + that.postalCode + ";"
-        wx.setClipboardData({
-            //准备复制的数据
-            data: stringForCopy,
-            success: function(res) {
-                console.log("剪切板复制的信息为: " + stringForCopy)
-                wx.showToast({
-                    title: '复制成功',
-                });
-            }
-        });
+		functions.copy(this.data.addressInfo)
     },
     /**
      * 下载兑奖信息
      */
     exportExchange: function() {
-        wx.showLoading({
-            title: '正在导出'
-        })
-        // 获取所有人信息
-        const db = wx.cloud.database()
-        // 查询所有兑换奖品数据，最多只会传回20个数组
-        db.collection('onlineCheckIn')
-            .where({
-                ["exchangeInfo.hasRequest"]: true
-            })
-            .field({
-                ["exchangeInfo.level"]: true,
-                ["userInfo.nickName"]: true,
-                address: true
-            })
-            .orderBy('exchangeInfo.level', 'desc')
-            .get({
-                success: res => {
-                    console.log("[导出Excel][兑奖信息]", res.data)
-                    // 调用云函数，生成Excel
-                    wx.cloud.callFunction({
-                        // 云函数名称
-                        name: 'excel-export',
-                        // 传给云函数的参数
-                        data: {
-                            list: res.data,
-                            mode: "exchange" // 所有兑奖信息
-                        },
-                        success: function(res) {
-                            const fileID = res.result.fileID
-                            console.log("[导出Excel][云存储]", fileID)
-                            if (fileID == null) {
-                                wx.hideLoading()
-                                Toast({
-                                    message: '导出失败，请稍后再试',
-                                    duration: 1500
-                                })
-                            } else {
-                                wx.hideLoading()
-                                wx.showLoading({
-                                    title: '正在下载'
-                                })
-                                // 下载文件
-                                wx.cloud.downloadFile({
-                                    fileID: fileID,
-                                    success: res => {
-                                        // 返回临时文件路径
-                                        console.log("[导出Excel][下载]", res.tempFilePath)
-                                        // 保存文件
-                                        const fs = wx.getFileSystemManager();
-                                        fs.saveFile({
-                                            tempFilePath: res.tempFilePath,
-                                            filePath: wx.env.USER_DATA_PATH + '/' + '兑奖名单.xlsx',
-                                            success(res) {
-                                                const savedFilePath = res.savedFilePath
-                                                console.log("[导出Excel][存储]", savedFilePath)
-                                                wx.hideLoading()
-                                                // 打开文件
-                                                wx.openDocument({
-                                                    filePath: savedFilePath,
-                                                    success: function(res) {
-                                                        console.log("[导出Excel][打开]", res)
-                                                    },
-                                                    fail: console.error
-                                                })
-                                            },
-                                            fail: console.error
-                                        })
-                                    },
-                                    fail: console.error
-                                })
-                            }
-                        },
-                        fail: console.error
-                    })
-                },
-                fail: console.error
-            })
+        exportFile.exchangeData()
     },
     /**
      * 导出所有签到信息
      */
     exportAll: function() {
-        // 获取所有人信息
-        const db = wx.cloud.database()
-        const _ = db.command
-        // 显示loading
-        wx.showLoading({
-            title: '正在导出'
-        })
-        // 查询所有用户的签到数据，最多只会传回20个数组
-        db.collection('onlineCheckIn')
-            .where({
-                signDaysTimes: _.neq(0)
-            })
-            .field({
-                signDaysTimes: true,
-                ["userInfo.nickName"]: true
-            })
-            .orderBy('signDaysTimes', 'desc')
-            .get({
-                success: res => {
-                    console.log("[导出Excel][兑奖信息]", res.data)
-                    // 调用云函数，生成Excel
-                    wx.cloud.callFunction({
-                        // 云函数名称
-                        name: 'excel-export',
-                        // 传给云函数的参数
-                        data: {
-                            list: res.data,
-                            mode: "all" // 所有兑奖信息
-                        },
-                        success: function(res) {
-                            const fileID = res.result.fileID
-                            console.log("[导出Excel][云存储]", fileID)
-                            if (fileID == null) {
-                                wx.hideLoading()
-                                Toast({
-                                    message: '导出失败，请稍后再试',
-                                    duration: 1500
-                                })
-                            } else {
-                                wx.hideLoading()
-                                wx.showLoading({
-                                    title: '正在下载'
-                                })
-                                // 下载文件
-                                wx.cloud.downloadFile({
-                                    fileID: fileID,
-                                    success: res => {
-                                        // 返回临时文件路径
-                                        console.log("[导出Excel][下载]", res.tempFilePath)
-                                        // 保存文件
-                                        const fs = wx.getFileSystemManager();
-                                        fs.saveFile({
-                                            tempFilePath: res.tempFilePath,
-                                            filePath: wx.env.USER_DATA_PATH + '/' + '签到名单.xlsx',
-                                            success(res) {
-                                                const savedFilePath = res.savedFilePath
-                                                console.log("[导出Excel][存储]", savedFilePath)
-                                                wx.hideLoading()
-                                                // 打开文件
-                                                wx.openDocument({
-                                                    filePath: savedFilePath,
-                                                    success: function(res) {
-                                                        console.log("[导出Excel][打开]", res)
-                                                    },
-                                                    fail: console.error
-                                                })
-                                            },
-                                            fail: console.error
-                                        })
-                                    },
-                                    fail: console.error
-                                })
-                            }
-                        },
-                        fail: console.error
-                    })
-                },
-                fail: console.error
-            })
+        exportFile.signData()
     }
 })

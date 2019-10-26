@@ -5,21 +5,21 @@
     </spaceBackground>
     <!-- 按钮区 -->
     <view class="shadow bg-white vi-btn">
-        <view bindtap="applyGift">
+        <view bindtap="applyGift" hover-class="default-hover">
             <image class="img-btn" src="/images/exchange.png" />
             <text wx:if="{{signDays.hasRequest}}" class="text-red">正在兑奖</text>
             <text wx:else>兑换奖品</text>
             <van-toast id="van-toast" />
         </view>
-        <view bindtap="superDraw">
+        <view bindtap="superDraw" hover-class="default-hover">
             <image class="img-btn" src="/images/award.png" />
-            <text>幸运抽奖</text>
+            <text>现金红包</text>
         </view>
-		<view bindtap="showHistory">
+		<view bindtap="showHistory" hover-class="default-hover">
             <image class="img-btn" src="/images/history.png" />
             <text>签到历史</text>
         </view>
-        <view bindtap="naviToRule">
+        <view bindtap="naviToRule" hover-class="default-hover">
             <image class="img-btn" src="/images/rule.png" />
             <text>签到规则</text>
         </view>
