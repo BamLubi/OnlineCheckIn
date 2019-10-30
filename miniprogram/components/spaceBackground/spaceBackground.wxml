@@ -1,37 +1,47 @@
 <!--components/spaceBackground/spaceBackground.wxml-->
 <view class="head">
-	<!-- 顶部滚动 -->
-	<view class="vi-ufo">
+    <!-- 顶部滚动 -->
+    <!-- <view class="vi-ufo">
 		<image src="images/ufo.png"></image>
 		<view>石家庄润哲文化传播有限公司</view>
-	</view>
-	<!-- 头像-昵称 -->
-	<view class="vi-avatar">
-		<block wx:if="{{!hasUserInfo}}">
-			<image class="img-avatar" src="images/wechat.png"></image>
-			<text>请先授权</text>
-		</block>
-		<block wx:else>
-            <open-data class="userAvatar" type="userAvatarUrl"></open-data>
-            <open-data class="userNickName" type="userNickName"></open-data>
+	</view> -->
+    <!-- 头像-昵称 -->
+    <view class="vi-avatar">
+        <block wx:if="{{!hasUserInfo}}">
+            <image class="img-avatar" src="images/wechat.png"></image>
+            <text>请先授权</text>
         </block>
-	</view>
-	<!-- 按钮区：授权、签到 -->
-	<block wx:if="{{!hasUserInfo}}">
-		<button class="btn-sign" hover-class="round-hover" open-type="getUserInfo" style="font-weight: bold;font-size: 50rpx;" bindgetuserinfo="getUserInfo">授 权</button>
-	</block>
-	<block wx:elif="{{!signDays}}">
-		<button class="btn-sign" hover-class="round-hover" style="font-weight: bold;font-size: 50rpx;" bindtap="sign">签 到</button>
-	</block>
-	<block wx:elif="{{signDays}}">
-		<view class="btn-hasSign-mask" />
-	<view class="btn-hasSign">
-			<view class="text-shadow text-white" style="font-weight: bold;font-size:50rpx;">已签到</view>
-			<view style="margin-top: 10rpx;font-size:45rpx;">{{signDays}}天</view>
-		</view>
-	</block>
-	<!-- 背景 -->
-	<image class="img-star" src="images/star.png" />
-	<image class="img-telescope" src="images/test.png" />
-	<image animation="{{animationData.star}}" class="img-star2" src="images/star2.png" />
+        <block wx:else>
+            <open-data class="userAvatar" type="userAvatarUrl"></open-data>
+            <view class="nameBalance">
+				<!-- 昵称 -->
+                <open-data class="userNickName" type="userNickName"></open-data>
+				<!-- 余额 -->
+				<view class="balance">
+					<text style="font-size: 24rpx;">余额:</text>
+					<text>{{balance}}元</text>
+				</view>
+				<!-- 体现 -->
+				<button class="cu-btn round shadow sm" hover-class="round-hover" bindtap="getBalance">提现</button>
+            </view>
+        </block>
+    </view>
+    <!-- 按钮区：授权、签到 -->
+    <block wx:if="{{!hasUserInfo}}">
+        <button class="btn-sign" hover-class="round-hover" open-type="getUserInfo" style="font-weight: bold;font-size: 50rpx;" bindgetuserinfo="getUserInfo">授 权</button>
+    </block>
+    <block wx:elif="{{!signDays}}">
+        <button class="btn-sign" hover-class="round-hover" style="font-weight: bold;font-size: 50rpx;" bindtap="sign">签 到</button>
+    </block>
+    <block wx:elif="{{signDays}}">
+        <view class="btn-hasSign-mask" />
+        <view class="btn-hasSign">
+            <view class="text-shadow text-white" style="font-weight: bold;font-size:50rpx;">已签到</view>
+            <view style="margin-top: 10rpx;font-size:45rpx;">{{signDays}}天</view>
+        </view>
+    </block>
+    <!-- 背景 -->
+    <image class="img-star" src="images/star.png" />
+    <image class="img-telescope" src="images/test.png" />
+    <image animation="{{animationData.star}}" class="img-star2" src="images/star2.png" />
 </view>

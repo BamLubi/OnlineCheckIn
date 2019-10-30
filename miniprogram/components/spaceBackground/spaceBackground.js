@@ -1,4 +1,5 @@
 // components/spaceBackground/spaceBackground.js
+import Toast from '../../dist/toast/toast'
 Component({
 	options: {
 		multipleSlots: true // 在组件定义时的选项中启用多slot支持 
@@ -8,6 +9,14 @@ Component({
 	 */
 	properties: {
 		hasUserInfo: {
+			type: Boolean,
+			value: false
+		},
+		balance: {
+			type: Number,
+			value: 1.01
+		},
+		hasGetBalance: {
 			type: Boolean,
 			value: false
 		}
@@ -20,7 +29,8 @@ Component({
 		animationData: {
 			star: null
 		},
-		signDays: 0
+		signDays: 0,
+		minBalance: 5, // 最小可提现额度
 	},
 
 	created: function(){
@@ -74,6 +84,28 @@ Component({
 			this.setData({
 				signDays: days
 			})
+		},
+		/**
+		 * 体现
+		 */
+		getBalance: function(){
+			console.log("用户体现")
+			// 余额小于5元不允许体现
+			if(this.data.balance < 5){
+				Toast({
+					message: '余额小于5元，不得体现',
+					duration: 1000
+				})
+			}else if(this.data.hasGetBalance){
+				// 今天已经提现的不可再次提现
+				Toast({
+					message: '一次体现操作正在进行中',
+					duration: 1000
+				})
+			}else{
+				// 对外接口
+				this.triggerEvent("getBalance")
+			}
 		}
 	}
 })

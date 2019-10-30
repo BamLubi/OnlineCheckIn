@@ -1,7 +1,7 @@
 <!--miniprogram/pages/sign/sign.wxml-->
 <view>
     <!-- 顶部组件 -->
-    <spaceBackground id="spaceBg" hasUserInfo="{{hasUserInfo}}" bindauthorize="authorize" bindclick="signIn">
+    <spaceBackground id="spaceBg" hasUserInfo="{{hasUserInfo}}" balance="{{balance.allBalance}}" hasGetBalance="{{balance.hasGetBalance}}" bindauthorize="authorize" bindclick="signIn">
     </spaceBackground>
     <!-- 按钮区 -->
     <view class="shadow bg-white vi-btn">
@@ -11,11 +11,11 @@
             <text wx:else>兑换奖品</text>
             <van-toast id="van-toast" />
         </view>
-        <view bindtap="superDraw" hover-class="default-hover">
-            <image class="img-btn" src="/images/award.png" />
+        <view bindtap="getPacket" hover-class="default-hover">
+            <image class="img-btn" src="/images/packet.png" />
             <text>现金红包</text>
         </view>
-		<view bindtap="showHistory" hover-class="default-hover">
+        <view bindtap="showHistory" hover-class="default-hover">
             <image class="img-btn" src="/images/history.png" />
             <text>签到历史</text>
         </view>
@@ -25,9 +25,9 @@
         </view>
     </view>
     <!-- 奖品图片 -->
-    <image src="/images/title.png" style="width:200rpx;height: 110rpx;margin-left: 20rpx;" />
-    <view class="award bg-white light">
-        <!-- <view class="cu-tag bg-blue radius" style="font-size:28rpx;margin-left: 20rpx;">签到大礼</view> -->
+    <!-- <image src="/images/title.png" style="width:200rpx;height: 110rpx;margin-left: 20rpx;" /> -->
+    <image src="/images/info.jpg" style="width:750rpx;height: 1420rpx;" />
+    <!-- <view class="award bg-white light">
         <view class="vi-chlid-award">
             <view class="cu-tag bg-blue radius light">连续签到10天: 签字笔一支</view>
             <image class="img-award" src="/images/award2.jpg"></image>
@@ -36,7 +36,7 @@
             <view class="cu-tag bg-blue radius light">连续签到30天: 韩款护手霜一支</view>
             <image class="img-award" src="/images/award1.jpg"></image>
         </view>
-    </view>
+    </view> -->
     <!-- 广告 -->
     <view></view>
     <!-- 版权 -->
@@ -49,7 +49,7 @@
     <view class="signSuccess cu-modal {{showSignMask?'show':''}}" bindtap="hideSignSuccessMask">
         <image src="/images/signsuccess.png" />
         <view class="content">
-            <view class="text-bold text-red text-shadow" style="font-size: 80rpx;margin-bottom: 50rpx;">签到成功</view>
+            <view class="text-bold text-red text-shadow" style="font-size: 80rpx;margin-bottom: 17vw;">签到成功</view>
             <view class="text-bold text-cyan" style="font-size: 40rpx;">连续签到{{signDays.all}}天</view>
             <view class="text-bold text-cyan" style="font-size: 40rpx;margin-bottom: 20rpx;">
                 <block wx:if="{{signDays.hasRequest}}">正在兑奖中</block>
@@ -59,17 +59,6 @@
             </view>
             <view class="text-bold text-grey" style="font-size: 30rpx;">中途断签将重新开始计算</view>
         </view>
-		<text class="btn-close cuIcon-close lg text-gray"/>
-    </view>
-
-    <!-- 幸运抽奖模态框 -->
-    <view class="cu-modal {{showPrizeDraw?'show':''}}" bindtap="hidePrizeDrawMask">
-        <view class="cu-dialog" catchtap>
-            <image src="/images/chouj.png" style="height:325rpx;width: 675rpx;"></image>
-            <view class="cu-bar bg-white">
-                <view class="action margin-0 flex-sub  solid-left" bindtap="hidePrizeDrawMask">幸运抽奖即将开放，我知道了</view>
-            </view>
-        </view>
     </view>
 
     <!-- 日期选择模态框 -->
@@ -78,5 +67,11 @@
             <!-- 日历 -->
             <calendar id="calendar" selectedDate="1999-10-10" days-style="{{dayStyle}}" bindOnDayClick="onDayClick" />
         </view>
+    </view>
+
+    <!-- 红包模态窗 -->
+    <view class="packet cu-modal {{showPacketMask?'show':''}}" bindtap="hidePacketModal">
+        <image src="/images/packet-info.png" />
+        <view class="value">￥ {{balance.signalPacket}}</view>
     </view>
 </view>

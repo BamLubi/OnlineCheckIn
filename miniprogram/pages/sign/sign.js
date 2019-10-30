@@ -5,6 +5,10 @@ const cloudDB = require('../../promise/wxCloudDB.js')
 const api = require('../../promise/wxAPI.js')
 
 var DefaultSignTable = {
+	balance: {
+		allBalance: 0, // 余额
+		hasGetBalance: false // 是否正在提现
+	},
     signData: [],
     signDaysTimes: 0,
     userInfo: null,
@@ -14,6 +18,8 @@ var DefaultSignTable = {
         hasRequest: false
     }
 }
+
+const packetList = [0.01,0.03,0.07,0.07,0.07,0.07,0.09,0.09,0.09,0.12,0.12,0.17,0.21]
 
 Page({
     /**
@@ -32,10 +38,15 @@ Page({
             "all": 0, // 连续签到次数，用于显示签到次数
             "hasRequest": false, // 是否申请
         },
+		balance: {
+			signalPacket: 0, // 单个红包
+			allBalance: 0,	// 用户余额
+			hasGetBalance: false, // 是否正在体现
+		},
         showSignMask: false, // 签到成功的模态窗
-        showPrizeDraw: false,
-        showCalendar: false,
-        dayStyle: []
+		showCalendar: false, // 日历的模态窗
+		showPacketMask: false,
+        dayStyle: [] // 日历样式
     },
 
     /**
@@ -173,14 +184,15 @@ Page({
                 function(res) {
 					
 					if (res.data[0].balance==undefined){
-						console.log("可以等于undefined")
+						return cloudDB.UpdateWxCloudDB('onlineCheckIn', res.data[0]._id, { ["balance.allBalance"]: 0,["balance.hasGetBalance"]: false }, '添加余额').then(res => { return that.queryTableId()})
 					}
                     // 设置：用户表_id，签到记录
                     that.setData({
                         tableId: res.data[0]._id,
                         allSignData: JSON.parse(JSON.stringify(res.data[0].signData)),
                         ["signDays.hasRequest"]: res.data[0].exchangeInfo.hasRequest,
-                        ["signDays.all"]: res.data[0].signDaysTimes
+                        ["signDays.all"]: res.data[0].signDaysTimes,
+						balance: res.data[0].balance
                     })
                     // 由于该方法需要复用，设置回调函数
                     if (that.queryTableIdCallback) {
@@ -194,16 +206,19 @@ Page({
                     // 确定用户个人信息
                     if (that.data.hasUserInfo) {
                         DefaultSignTable.userInfo = that.data.userInfo
+						return cloudDB.AddWxCloudDB('onlineCheckIn', DefaultSignTable).then(res => {
+							return that.queryTableId()
+						})
                     } else {
                         that.spaceBg = that.selectComponent("#spaceBg")
                         that.spaceBg.getUserInfoCallback = res => {
                             that.authorize(res)
                             DefaultSignTable.userInfo = that.data.userInfo
+							return cloudDB.AddWxCloudDB('onlineCheckIn', DefaultSignTable).then(res => {
+								return that.queryTableId()
+							})
                         }
                     }
-                    return cloudDB.AddWxCloudDB('onlineCheckIn', DefaultSignTable).then(res => {
-                        return that.queryTableId()
-                    })
                 }
             )
     },
@@ -334,7 +349,12 @@ Page({
         // 获取参数
         var level = this.data.signDays.all
         // 小于10天
-        if (this.data.signDays.hasRequest) {
+		if (this.data.hasUserInfo == false) {
+			Toast({
+				message: '请先授权!',
+				duration: 1000
+			})
+		}else if (this.data.signDays.hasRequest) {
             Toast({
                 message: '上一次兑奖未完结，无法再次兑奖',
                 duration: 1500
@@ -393,20 +413,82 @@ Page({
     /**
      * 抽奖
      */
-    superDraw: function() {
-        this.setData({
-            showPrizeDraw: true
-        })
+	getPacket: function() {
+		let flg = this.hasGetPacketToday()
+		if(this.data.hasUserInfo==false){
+			Toast({
+				message: '请先授权!',
+				duration: 1000
+			})
+		}else if(flg == false){
+			// 今日已经获取红包
+			Toast({
+				message: '您今天已经拿过了哦~',
+				duration: 1000
+			})
+		}else{
+			let index = parseInt(Math.random() * 12)
+			let newBalance = this.data.balance.allBalance + packetList[index]
+			newBalance = parseInt(newBalance * 100)/100
+			// 数据库操作
+			wx.showLoading({
+				title: '请稍后'
+			})
+			cloudDB.UpdateWxCloudDB('onlineCheckIn',this.data.tableId,{
+				["balance.allBalance"]: newBalance
+			},'更新余额').then(res=>{
+				wx.hideLoading()
+				// 显示模态层
+				this.setData({
+					["balance.signalPacket"]: packetList[index],
+					["balance.allBalance"]: newBalance,
+					showPacketMask: true
+				})
+				wx.setStorageSync("getPacketTime", flg)
+			})
+		}
+		
     },
+	/**
+	 * 判断今日是否获得红包
+	 */
+	hasGetPacketToday: function(){
+		let now = new Date()
+		let nowYear = now.getFullYear()
+		let nowMonth = now.getMonth() + 1
+		let nowDay = now.getDate()
+		let getPacketTime = wx.getStorageSync("getPacketTime")
+		if (getPacketTime == '') return nowYear + '-' + nowMonth + '-' + nowDay
+		else{
+			getPacketTime = getPacketTime.split('-')
+			if (getPacketTime[0] < nowYear || getPacketTime[1] < nowMonth || getPacketTime[2] < nowDay) return nowYear + '-' + nowMonth + '-' + nowDay
+			else return false
+		}
+	},
+	/**
+	 * 隐藏红包模态框
+	 */
+	hidePacketModal: function(){
+		this.setData({
+			showPacketMask: false
+		})
+	},
     /**
      * 显示签到记录日历
      */
     showHistory: function() {
-        this.calendar = this.selectComponent("#calendar")
-        this.calendar.refreshCalendar()
-        this.setData({
-            showCalendar: true
-        })
+		if (this.data.hasUserInfo == false) {
+			Toast({
+				message: '请先授权!',
+				duration: 1000
+			})
+		}else{
+			this.calendar = this.selectComponent("#calendar")
+			this.calendar.refreshCalendar()
+			this.setData({
+				showCalendar: true
+			})
+		}
     },
     /**
      * 隐藏签到记录日历

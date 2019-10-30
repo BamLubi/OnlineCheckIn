@@ -20,7 +20,7 @@ App({
             // })
             wx.cloud.init()
         }
-
+		
         // 在已经授权的情况下，获取用户信息
 		api.GetSetting().then(res=>{
 			return api.GetUserInfo()

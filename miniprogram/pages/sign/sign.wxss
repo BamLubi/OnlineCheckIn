@@ -1,63 +1,92 @@
 /* miniprogram/pages/sign/sign.wxss */
 
-.vi-btn{
-	margin: 15rpx;
-	padding: 10rpx;
-	border-radius: 20rpx;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
+.vi-btn {
+    margin: 15rpx;
+    padding: 10rpx;
+    border-radius: 20rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
-.vi-btn view{
-	display: flex;
-	flex-direction: column;
-	justify-content: space-evenly;
-	align-items: center;
+.vi-btn view {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
-.vi-btn view image{
-	width: 70rpx;
-	height: 70rpx;
+.vi-btn view image {
+    width: 70rpx;
+    height: 70rpx;
 }
 
-.award{
-	padding-bottom: 10rpx;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-around;
-	align-items: flex-start;
+.award {
+    padding-bottom: 10rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
 }
 
-.award .vi-chlid-award{
-	display: flex;
-	flex-direction: column;
-	width: 100%;
+.award .vi-chlid-award {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
-.award .vi-chlid-award view{
-	font-size: 28rpx;
+.award .vi-chlid-award view {
+    font-size: 28rpx;
 }
 
-.signSuccess image{
-	width: 750rpx;
-	height: 623.59rpx;
-	top: 250rpx;
+.signSuccess image {
+	width: 100vw;
+	height: 93vw;
+	top: 30vw;
 }
 
-.signSuccess .content{
+.signSuccess .content {
+    position: absolute;
+	top: 50vw;
+	left: 32vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.hd {
+    content: "";
+    height: 200rpx;
+    width: 700rpx;
+	margin-left: 25rpx;
+    border-width: 4rpx;
+    border-color: blue;
+    border-style: solid;
+	border-radius: 10rpx;
+	box-shadow:6rpx 6rpx 0rpx 0rpx #00ffff;
+    /* transform: rotate(-45deg); */
+}
+
+/* 红包 */
+.packet{
+	height: 100vh;
+}
+
+.packet image{
+	width: 47vh;
+	height: 60vh;
+	top: 17vh;
+}
+
+.packet .value{
 	position: absolute;
-	top: 320rpx;
-	left: 145rpx;
-	height: 500rpx;
-	width: 500rpx;
+	top: 29vh;
+	width: 100vw;
+	font-size: 50px!important;
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-}
-
-.signSuccess .btn-close{
-	width: 100rpx;
-	height: 100rpx;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+	color: yellow;
 }
