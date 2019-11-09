@@ -1,5 +1,6 @@
 // components/spaceBackground/spaceBackground.js
 import Toast from '../../dist/toast/toast'
+const cloudDB = require('../../promise/advDB.js')
 Component({
 	options: {
 		multipleSlots: true // 在组件定义时的选项中启用多slot支持 
@@ -31,6 +32,8 @@ Component({
 		},
 		signDays: 0,
 		minBalance: 5, // 最小可提现额度
+		showRankList: false,
+		rankList: []
 	},
 
 	created: function(){
@@ -106,6 +109,23 @@ Component({
 				// 对外接口
 				this.triggerEvent("getBalance")
 			}
+		},
+		/**
+		 * 显示排行榜
+		 */
+		showRankList: function(){
+			var that = this
+			cloudDB.GetRankList(10).then(res=>{
+				that.setData({
+					rankList: res.data,
+					showRankList: true
+				})
+			})
+		},
+		hideRankList: function(){
+			this.setData({
+				showRankList: false
+			})
 		}
 	}
 })

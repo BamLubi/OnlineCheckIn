@@ -3,14 +3,22 @@
     <!-- 顶部组件 -->
     <spaceBackground id="spaceBg" hasUserInfo="{{hasUserInfo}}" balance="{{balance.allBalance}}" hasGetBalance="{{balance.hasGetBalance}}" bindauthorize="authorize" bindclick="signIn">
     </spaceBackground>
+	<!-- toast组件 -->
+	<van-toast id="van-toast" />
     <!-- 按钮区 -->
     <view class="shadow bg-white vi-btn">
-        <view bindtap="applyGift" hover-class="default-hover">
-            <image class="img-btn" src="/images/exchange.png" />
-            <text wx:if="{{signDays.hasRequest}}" class="text-red">正在兑奖</text>
-            <text wx:else>兑换奖品</text>
-            <van-toast id="van-toast" />
-        </view>
+		<block wx:if="{{!signDays.hasRequest}}">
+			<view bindtap="applyGift" hover-class="default-hover">
+				<image class="img-btn" src="/images/exchange.png" />
+				<text>兑换奖品</text>
+			</view>
+		</block>
+		<block wx:else>
+			<view bindtap="cancelApplyGift" hover-class="default-hover">
+				<image class="img-btn" src="/images/cancel-exchange.png" />
+				<text class="text-red">取消兑奖</text>
+			</view>
+		</block>
         <view bindtap="getPacket" hover-class="default-hover">
             <image class="img-btn" src="/images/packet.png" />
             <text>现金红包</text>
@@ -19,24 +27,13 @@
             <image class="img-btn" src="/images/history.png" />
             <text>签到历史</text>
         </view>
-        <view bindtap="naviToRule" hover-class="default-hover">
+        <navigator url="/pages/rule/rule" hover-class="default-hover">
             <image class="img-btn" src="/images/rule.png" />
             <text>签到规则</text>
-        </view>
+        </navigator>
     </view>
     <!-- 奖品图片 -->
-    <!-- <image src="/images/title.png" style="width:200rpx;height: 110rpx;margin-left: 20rpx;" /> -->
-    <image src="/images/info.jpg" style="width:750rpx;height: 1420rpx;" />
-    <!-- <view class="award bg-white light">
-        <view class="vi-chlid-award">
-            <view class="cu-tag bg-blue radius light">连续签到10天: 签字笔一支</view>
-            <image class="img-award" src="/images/award2.jpg"></image>
-        </view>
-        <view class="vi-chlid-award">
-            <view class="cu-tag bg-blue radius light">连续签到30天: 韩款护手霜一支</view>
-            <image class="img-award" src="/images/award1.jpg"></image>
-        </view>
-    </view> -->
+    <image src="/images/info.jpg" style="width:750rpx;height: 2094rpx;" />
     <!-- 广告 -->
     <view></view>
     <!-- 版权 -->
@@ -46,7 +43,7 @@
     <button class="cu-button lines-red shadow" style="position: fixed; bottom: 10px;right: 10px;width: 100px;" hidden="{{!isRoot?true:false}}" bindtap="navigateToRoot">管理员</button>
 
     <!-- 签到成功模态窗 -->
-    <view class="signSuccess cu-modal {{showSignMask?'show':''}}" bindtap="hideSignSuccessMask">
+    <view class="signSuccess cu-modal {{showSignMask?'show':''}}" bindtap="hideSignSuccessMask" catchtouchmove>
         <image src="/images/signsuccess.png" />
         <view class="content">
             <view class="text-bold text-red text-shadow" style="font-size: 80rpx;margin-bottom: 17vw;">签到成功</view>
@@ -62,7 +59,7 @@
     </view>
 
     <!-- 日期选择模态框 -->
-    <view class="cu-modal {{showCalendar?'show':''}}" bindtap="hideHistory">
+    <view class="cu-modal {{showCalendar?'show':''}}" bindtap="hideHistory" catchtouchmove>
         <view class="cu-dialog" style="width: 90%;border-radius: 15px;" catchtap>
             <!-- 日历 -->
             <calendar id="calendar" selectedDate="1999-10-10" days-style="{{dayStyle}}" bindOnDayClick="onDayClick" />
@@ -70,7 +67,7 @@
     </view>
 
     <!-- 红包模态窗 -->
-    <view class="packet cu-modal {{showPacketMask?'show':''}}" bindtap="hidePacketModal">
+    <view class="packet cu-modal {{showPacketMask?'show':''}}" bindtap="hidePacketModal" catchtouchmove>
         <image src="/images/packet-info.png" />
         <view class="value">￥ {{balance.signalPacket}}</view>
     </view>

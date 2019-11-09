@@ -419,12 +419,12 @@ Page({
      * 下载兑奖信息
      */
     exportExchange: function() {
-        exportFile.exchangeData()
+        exportFile.ExchangeData()
     },
     /**
      * 导出所有签到信息
      */
     exportAll: function() {
-        exportFile.signData()
+        exportFile.SignData()
     }
 })

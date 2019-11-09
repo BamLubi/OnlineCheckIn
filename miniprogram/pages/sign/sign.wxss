@@ -9,14 +9,14 @@
     justify-content: space-around;
 }
 
-.vi-btn view {
+.vi-btn view,navigator {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
 }
 
-.vi-btn view image {
+.vi-btn .img-btn {
     width: 70rpx;
     height: 70rpx;
 }

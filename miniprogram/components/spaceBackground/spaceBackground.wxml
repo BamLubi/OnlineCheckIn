@@ -1,10 +1,5 @@
 <!--components/spaceBackground/spaceBackground.wxml-->
 <view class="head">
-    <!-- 顶部滚动 -->
-    <!-- <view class="vi-ufo">
-		<image src="images/ufo.png"></image>
-		<view>石家庄润哲文化传播有限公司</view>
-	</view> -->
     <!-- 头像-昵称 -->
     <view class="vi-avatar">
         <block wx:if="{{!hasUserInfo}}">
@@ -14,15 +9,15 @@
         <block wx:else>
             <open-data class="userAvatar" type="userAvatarUrl"></open-data>
             <view class="nameBalance">
-				<!-- 昵称 -->
+                <!-- 昵称 -->
                 <open-data class="userNickName" type="userNickName"></open-data>
-				<!-- 余额 -->
-				<view class="balance">
-					<text style="font-size: 24rpx;">余额:</text>
-					<text>{{balance}}元</text>
-				</view>
-				<!-- 体现 -->
-				<button class="cu-btn round shadow sm" hover-class="round-hover" bindtap="getBalance">提现</button>
+                <!-- 余额 -->
+                <view class="balance">
+                    <text style="font-size: 24rpx;">余额:</text>
+                    <text>{{balance}}元</text>
+                </view>
+                <!-- 体现 -->
+                <button class="cu-btn round shadow sm" hover-class="round-hover" bindtap="getBalance">提现</button>
             </view>
         </block>
     </view>
@@ -40,8 +35,45 @@
             <view style="margin-top: 10rpx;font-size:45rpx;">{{signDays}}天</view>
         </view>
     </block>
+    <!-- 排行榜 -->
+    <view class="rankList">
+        <view class="cu-tag bg-red" hover-class="default-hover" bindtap="showRankList">排行榜</view>
+    </view>
     <!-- 背景 -->
     <image class="img-star" src="images/star.png" />
     <image class="img-telescope" src="images/test.png" />
     <image animation="{{animationData.star}}" class="img-star2" src="images/star2.png" />
+
+    <!-- 排行榜模态框 -->
+    <view class="cu-modal {{showRankList?'show':''}}" bindtap="hideRankList" catchtouchmove>
+        <view class="cu-dialog" style="width: 90%;border-radius: 15px;height: 80vh;" catchtap>
+            <!-- 标题 -->
+            <view class="tr bg-mauve">
+                <view class="th" style="width: 18%!important;">排名</view>
+                <view class="th" style="width: 18%!important;">头像</view>
+                <view class="th">昵称</view>
+                <view class="th">签到次数</view>
+            </view>
+            <scroll-view scroll-y="true" style="height: 73vh;">
+                <!-- 行 -->
+                <view wx:for="{{rankList}}" wx:key class="tr {{index % 2 == 0?'bg-g':''}}">
+                    <!-- 序号 -->
+                    <view class="td" style="width: 18%!important;">
+                        <image wx:if="{{index+1==1}}" class="small-image" src="images/1.png" />
+                        <image wx:elif="{{index+1==2}}" class="small-image" src="images/2.png" />
+                        <image wx:elif="{{index+1==3}}" class="small-image" src="images/3.png" />
+                        <block wx:else>{{index+1}}</block>
+                    </view>
+                    <!-- 头像 -->
+                    <view class="td" style="width: 18%!important;">
+                        <image class="small-image round" src="{{item.userInfo.avatarUrl}}" />
+                    </view>
+                    <!-- 昵称 -->
+                    <view class="td text-cut">{{item.userInfo.nickName}}</view>
+                    <!-- 签到次数 -->
+                    <view class="td">{{item.signDaysTimes}}</view>
+                </view>
+            </scroll-view>
+        </view>
+    </view>
 </view>

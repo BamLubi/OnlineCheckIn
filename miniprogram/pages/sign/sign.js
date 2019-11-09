@@ -11,12 +11,16 @@ var DefaultSignTable = {
 	},
     signData: [],
     signDaysTimes: 0,
-    userInfo: null,
+    userInfo: {
+		nickName: '未知',
+		avatarUrl: 'https://6c79-lyy1-2mnm7-1258923430.tcb.qcloud.la/onlineSignIn/wechat.png?sign=c6fa51033d730f4efeffb9497de493c9&t=1572660717'
+	},
     exchangeInfo: {
         date: new Date(),
         level: 0,
         hasRequest: false
-    }
+    },
+	msg: []
 }
 
 const packetList = [0.01,0.03,0.07,0.07,0.07,0.07,0.09,0.09,0.09,0.12,0.12,0.17,0.21]
@@ -182,9 +186,13 @@ Page({
             .then(
                 // 有记录
                 function(res) {
-					
+					// 无余额时更新
 					if (res.data[0].balance==undefined){
 						return cloudDB.UpdateWxCloudDB('onlineCheckIn', res.data[0]._id, { ["balance.allBalance"]: 0,["balance.hasGetBalance"]: false }, '添加余额').then(res => { return that.queryTableId()})
+					}
+					// 无msg时更新
+					if (res.data[0].msg == undefined) {
+						return cloudDB.UpdateWxCloudDB('onlineCheckIn', res.data[0]._id, { msg: new Array()}, '添加消息').then(res => { return that.queryTableId() })
 					}
                     // 设置：用户表_id，签到记录
                     that.setData({
@@ -367,7 +375,7 @@ Page({
         } else {
             level = level < 30 ? 10 : 30
             // 显示选择框
-            api.ShowModal('', '确认申请兑换' + level + '天大礼包嘛').then(res => {
+            api.ShowModal('', '确认申请兑换' + level + '天礼品嘛').then(res => {
                 return api.ChooseAddress()
             }).then(res => {
                 wx.showLoading({
@@ -402,14 +410,34 @@ Page({
             })
         }
     },
-    /**
-     * 跳转规则页面
-     */
-    naviToRule: function() {
-        wx.navigateTo({
-            url: '/pages/rule/rule',
-        })
-    },
+	/**
+	 * 取消兑奖
+	 */
+	cancelApplyGift: function(){
+		var that = this
+		api.ShowModal('', '确认取消兑换礼品嘛').then(res => {
+			wx.showLoading({
+				title: '取消中'
+			})
+			return cloudDB.UpdateWxCloudDB('onlineCheckIn', that.data.tableId, {
+				["exchangeInfo.level"]: 0,
+				["exchangeInfo.hasRequest"]: false
+			}, '取消兑换奖品')
+		}).then(res => {
+			// 隐藏模态框
+			wx.hideLoading()
+			// 改变状态
+			that.setData({
+				["signDays.hasRequest"]: false
+			})
+			// 反馈
+			wx.showToast({
+				title: '取消成功',
+				icon: 'success',
+				duration: 1000
+			})
+		})
+	},
     /**
      * 抽奖
      */
@@ -518,7 +546,7 @@ Page({
      * 跳转到管理员页面
      */
     navigateToRoot: function() {
-        if (this.data.openid == app.globalData.rootOpenId) {
+        if (this.data.isRoot) {
             wx.navigateTo({
                 url: '/rootPackage/pages/root/root'
             })
