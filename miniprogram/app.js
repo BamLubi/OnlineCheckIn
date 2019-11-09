@@ -6,7 +6,7 @@ App({
         openid: null,
         userInfo: null,
         hasUserInfo: false,
-        rootOpenId: ['odufi5LQnaBGOAPIlWRIrOWtFvLM']
+        rootOpenId: ['odufi5LQnaBGOAPIlWRIrOWtFvLM', 'oOq6m5GJu622Tnf6-5FU1fWKQ85Q', 'oOq6m5DHSXqOhBAOZopkL28KfH5I', 'oOq6m5DNKaqviHYUZR5LPGQFHVuk']
     },
     onLaunch: function() {
         var that = this
